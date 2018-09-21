@@ -1,0 +1,76 @@
+New in spring boot 2.X
+New Feature
+Spring Boot 2.0
+1.java 版本最低支持 jdk8，支持jdk9
+2.支持spring 5，  Tomcat 8.5，Flyway 5，Hibernate 5.2，Thymeleaf 3
+3.spring data支持Cassandra, MongoDB, Couchbase and Redis
+4. WebFlux 内置了netty4.1
+5.对于Tomcat, Undertow and Jetty 支持HTTP2
+6.新加starter，spring-boot-starter-json，spring-boot-starter-quartz
+7.数据库线程池，从tomcat pool改成HikariCP
+8. JdbcTemplate可以自定义，spring.jdbc.template
+9.Actuator支持Jersey和WebFlux，新增注解@Endpoint。Micrometer ： Spring Boot 2.0 no longer ships with its own metrics APIs. Instead we rely on micrometer.io for all application monitoring needs.
+10.默认使用CGLIB 作为代理，包括对AOP 的支持。如果想要使用基于接口的代理，需要设置spring.aop.proxy-target-class = false
+11.加入一些新的event事件：ApplicationStartedEvent->context 刷新，在任何application和command-line runners 被调用之前。ApplicationReadyEvent->在所有的application和command-line runners之后被调用。
+
+Spring Boot 2.1.0 M1
+1. 默认不可以重写类，如果需要overriding，设置spring.main.allow-bean-definition-overriding为true
+2.引用了spring-security，那么/info和/health默认不可见
+3. 不再提供json-simple的依赖关系管理，并且已删除使用它的JsonParser实现。
+4.支持WebFlux OAuth2
+5.需要 Spring Framework 5.1，Tomcat 9，Undertow 2，Hibernate 5.3，JUnit 5.2
+6.支持JDK11
+Spring Boot 2.1.0 M2
+1. HttpPutFormContentFilter失效
+2.不在支持 activemq-pool，可以换成pooled-jms
+
+Spring Framework 5
+Spring5.0
+1.支持jdk8 - 9，Tomcat 8.5+，Jetty 9.4+，WildFly 10+，WebSphere 9+，with the addition of Netty 4.1 and Undertow 1.4 for Spring WebFlux
+2.不在支持Portlet, Velocity, JasperReports, XMLBeans, JDO, Guava (replaced by the Caffeine support)
+3.带有自己的logging，spring core依赖的spring-jcl。替代之前的commons-logging，这个logging之前使用需要exclude。jcl支持Log4j 2, SLF4J 和JUL (java.util.logging)
+4. CORS支持，allowCredentials 这个默认是false，可以在controller上加一个@CrossOrigin(allowCredentials="true")，或者通过WebMvcConfigurer#addCorsMappings 这个配置
+5.增加了@Nullable和@NotNull注解
+6. 新增模块，spring-webflux -> 反应式编程框架
+7.扩展springMvc，使其支持反应式的返回值 -> 能够使用WebClient和其他反应式库
+8.可以用index标记需要扫描的包路径：META-INF/spring.components
+9.支持Kotlin语言
+10.支持Junit5；支持在Spring TestContext框架上并行测试；WebTestClient可以测试反应式编程
+11. Jigsaw的Java模块化 -> java9的一部分，spring5包含对Jigsaw的支持
+Spring5.1
+1.开始支持jdk11
+2.request method增加了OPTIONS的支持
+3.spring webflux：使用Netty0.8的时候，支持HTTP/2
+Java9
+1.平台级模块系统
+2. 创建针对应用程序进行优化的最小运行时映像而不需要使用完全加载 JDK 安装版本
+3.JShell交互式java REPL，交互式环境
+4.javadoc改进了，可以直接搜索类名等
+5.添加集合工厂方法：List<String> strings = List.of("first", "second");
+6.Stream API改进，重载 iterate方法，新加3个方法：dropWhile，takeWhile，ofNullable
+7.私有接口方法，java8当中接口可以有默认方法
+8.提供对WebSocket和HTTP/2的支持
+9.支持多版本的jar
+
+Spring cloud gateway
+Gateway 在运行时，需要netty，但是如果是传统的servlet容器，或者打包成一个war，那么netty将不会工作。	
+The pre, gateway, global filters 需要在route 当中才能起作用，如果在查找request 的时候，RequestMappingHandlerMapping 没有找到，那么会去找RouterFunctions，没有找到之后，最后会找routes，在这里才会执行各种filters。
+Global filter
+对所有的routes起作用
+Gateway filter
+ServerHttpRequest req = exchange.getRequest();
+//new a request build, do some modify to request by builder (request cannot be modified directly)
+ServerHttpRequest.Builder mutate = request.mutate();
+//new a request by builer
+ServerHttpRequest build = mutate.build();
+//new a serverWebExchange builder, set the new request to builder and new a serverWebExchange
+return gatewayFilterChain.filter(serverWebExchange.mutate().request(build).build());
+1.extends AbstractGatewayFilterFactory
+Config in application.yml:
+spring:
+  cloud:
+    gateway:
+      default-filters:
+      - Pre=true
+The code:
+
